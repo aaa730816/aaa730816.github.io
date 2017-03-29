@@ -50,7 +50,7 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Zoeken"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
@@ -60,6 +60,139 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-SpringMVC国际化-通过超链接切换Locale" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/29/SpringMVC国际化-通过超链接切换Locale/" class="article-date">
+  <time datetime="2017-03-29T12:16:19.000Z" itemprop="datePublished">2017-03-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/blog/">blog</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/29/SpringMVC国际化-通过超链接切换Locale/">SpringMVC国际化-通过超链接切换Locale</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>#SpringMVC国际化–通过超链接切换Locale</p>
+<p>##实现原理</p>
+<ul>
+<li>LocaleChangeInterceptor：<ol>
+<li>获取请求域中 name = locale 的参数</li>
+<li>将这个 locale 参数解析为 Locale 对象</li>
+<li>获取 LocaleResolver 对象</li>
+</ol>
+</li>
+<li>SessionLocaleResolver：<ol>
+<li>将 Locale 对象放入Session中</li>
+</ol>
+</li>
+<li>应用程序<ol>
+<li>取出 Session 中的 Locale 对象</li>
+<li>使用该 Locale 对象加载对应的国际化资源文件<br>##通过源码分析</li>
+</ol>
+</li>
+<li><strong>DispatcherServlet.class</strong></li>
+<li><p>方法：doDispatch()<br><pre><code></code></pre></p>
+<pre><code>if(!mappedHandler.applyPreHandle(processedRequest, response)) {
+    return;
+}
+err = err1.handle(processedRequest, response, mappedHandler.getHandler());
+</code></pre><p></p>
+</li>
+<li><p>在渲染视图前，会调用 LocaleChangeInterceptor 的 preHandle 方法</p>
+</li>
+<li><p><strong>LocaleChangeInterceptor.class</strong></p>
+</li>
+<li><p>方法：preHandle()<br><pre><code></code></pre></p>
+<pre><code>public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
+    String newLocale = request.getParameter(this.getParamName());
+    if(newLocale != null &amp;&amp; this.checkHttpMethod(request.getMethod())) {
+        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+        if(localeResolver == null) {
+            throw new IllegalStateException(&quot;No LocaleResolver found: not in a DispatcherServlet request?&quot;);
+        }
+
+        try {
+            localeResolver.setLocale(request, response, this.parseLocaleValue(newLocale));
+        } catch (IllegalArgumentException var7) {
+            if(!this.isIgnoreInvalidLocale()) {
+                throw var7;
+            }
+
+            this.logger.debug(&quot;Ignoring invalid locale value [&quot; + newLocale + &quot;]: &quot; + var7.getMessage());
+        }
+    }
+
+    return true;
+}
+</code></pre><p></p>
+</li>
+<li><p>该方法获取请求域中的 name = locale 的参数，并将其解析为 Locale 对象，最后将 Locale 对象设置给 localeResolver</p>
+</li>
+<li><p><strong>SessionLocaleResolver.class</strong></p>
+</li>
+<li><p>方法：setLocaleContext()<br><pre><code><br>  public void setLocaleContext(HttpServletRequest request, HttpServletResponse response, LocaleContext localeContext) {</code></pre></p>
+<pre><code>    Locale locale = null;
+    TimeZone timeZone = null;
+    if(localeContext != null) {
+        locale = localeContext.getLocale();
+        if(localeContext instanceof TimeZoneAwareLocaleContext) {
+            timeZone = ((TimeZoneAwareLocaleContext)localeContext).getTimeZone();
+        }
+    }
+
+    WebUtils.setSessionAttribute(request, LOCALE_SESSION_ATTRIBUTE_NAME, locale);
+  WebUtils.setSessionAttribute(request, TIME_ZONE_SESSION_ATTRIBUTE_NAME, timeZone);
+}
+</code></pre><p></p>
+</li>
+<li><p>在这个方法中 locale = localeContext.getLocale(); 获取在 LocaleChangeIntecerpetor 中设置的 Locale 对象</p>
+</li>
+<li>WebUtils.setSessionAttribute(request, LOCALE_SESSION_ATTRIBUTE_NAME, locale); 将 Locale 对象放入 Session 中</li>
+</ul>
+<p>##实现步骤</p>
+<ul>
+<li><p>在 Spring 配置文件中配置 LocaleChangeIntecerpetor 以及 SessionLocaleResolver<br><pre><code></code></pre></p>
+<pre><code>&amp;ltbean id=&quot;localeResolver&quot; class=&quot;org.springframework.web.servlet.i18n.SessionLocaleResolver&quot;/&gt;
+    &amp;ltmvc:interceptors&gt;
+       &amp;ltbean class=&quot;org.springframework.web.servlet.i18n.LocaleChangeInterceptor&quot;/&gt;
+      &amp;lt/mvc:interceptors&gt;
+</code></pre><p></p>
+</li>
+<li><p>在 jsp 中设置一个超链接，传递 locale 参数<br><pre><code></code></pre></p>
+<pre><code>&amp;lta href=&quot;i18n?locale=en_US&quot;&gt;i18n&lt;/a&gt;
+</code></pre><p></p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/03/29/SpringMVC国际化-通过超链接切换Locale/" data-id="cj0uyfciw0001r8wep123eq6c" class="article-share-link">Delen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC/">SpringMVC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/博客/">博客</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/国际化/">国际化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/文章/">文章</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -96,7 +229,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/29/hello-world/" data-id="cj0uy94xz000000wewydaga37" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/29/hello-world/" data-id="cj0uyfcid0000r8wecahbt95p" class="article-share-link">Delen</a>
       
       
     </footer>
@@ -112,16 +245,37 @@
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categorieën</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a></li></ul>
+    </div>
+  </div>
 
-  
-    
 
-  
-    
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Labels</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringMVC/">SpringMVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/国际化/">国际化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章/">文章</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SpringMVC/" style="font-size: 10px;">SpringMVC</a> <a href="/tags/博客/" style="font-size: 10px;">博客</a> <a href="/tags/国际化/" style="font-size: 10px;">国际化</a> <a href="/tags/文章/" style="font-size: 10px;">文章</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archieven</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
     </div>
@@ -131,9 +285,13 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Recente berichten</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/03/29/SpringMVC国际化-通过超链接切换Locale/">SpringMVC国际化-通过超链接切换Locale</a>
+          </li>
         
           <li>
             <a href="/2017/03/29/hello-world/">Hello World</a>
