@@ -3,42 +3,54 @@
 <head>
   <meta charset="utf-8">
   
-  <title>SpringMVC国际��?通过超链接切换Locale | Hexo</title>
+  <title>SpringMVC国际化--通过超链接切换Locale | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="SpringMVC���ʻ�-ͨ���������л�Localeʵ��ԭ��
-LocaleChangeInterceptor��
-��ȡ�������� name = locale �Ĳ���
-������ locale ��������Ϊ Locale ����
-��ȡ LocaleResolver ����
+  <meta name="description" content="SpringMVC国际化–通过超链接切换Locale实现原理
+LocaleChangeInterceptor：
+获取请求域中 name = locale 的参数
+将这个 locale 参数解析为 Locale 对象
+获取 LocaleResolver 对象
 
 
-SessionLocaleResolver��
-�� Locale ������">
+SessionLocaleResolver：
+将 Locale 对象放入Session中
+
+
+应用程序
+取出 Session 中的 Loc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SpringMVC国际��?通过超链接切换Locale">
+<meta property="og:title" content="SpringMVC国际化--通过超链接切换Locale">
 <meta property="og:url" content="http://yoursite.com/2017/03/29/SpringMVC国际化-通过超链接切换Locale/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="SpringMVC���ʻ�-ͨ���������л�Localeʵ��ԭ��
-LocaleChangeInterceptor��
-��ȡ�������� name = locale �Ĳ���
-������ locale ��������Ϊ Locale ����
-��ȡ LocaleResolver ����
+<meta property="og:description" content="SpringMVC国际化–通过超链接切换Locale实现原理
+LocaleChangeInterceptor：
+获取请求域中 name = locale 的参数
+将这个 locale 参数解析为 Locale 对象
+获取 LocaleResolver 对象
 
 
-SessionLocaleResolver��
-�� Locale ������">
-<meta property="og:updated_time" content="2017-03-29T12:51:07.158Z">
+SessionLocaleResolver：
+将 Locale 对象放入Session中
+
+
+应用程序
+取出 Session 中的 Loc">
+<meta property="og:updated_time" content="2017-03-29T13:11:54.569Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SpringMVC国际��?通过超链接切换Locale">
-<meta name="twitter:description" content="SpringMVC���ʻ�-ͨ���������л�Localeʵ��ԭ��
-LocaleChangeInterceptor��
-��ȡ�������� name = locale �Ĳ���
-������ locale ��������Ϊ Locale ����
-��ȡ LocaleResolver ����
+<meta name="twitter:title" content="SpringMVC国际化--通过超链接切换Locale">
+<meta name="twitter:description" content="SpringMVC国际化–通过超链接切换Locale实现原理
+LocaleChangeInterceptor：
+获取请求域中 name = locale 的参数
+将这个 locale 参数解析为 Locale 对象
+获取 LocaleResolver 对象
 
 
-SessionLocaleResolver��
-�� Locale ������">
+SessionLocaleResolver：
+将 Locale 对象放入Session中
+
+
+应用程序
+取出 Session 中的 Loc">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -76,9 +88,9 @@ SessionLocaleResolver��
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Zoeken"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
@@ -90,7 +102,7 @@ SessionLocaleResolver��
         <section id="main"><article id="post-SpringMVC国际化-通过超链接切换Locale" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/03/29/SpringMVC国际化-通过超链接切换Locale/" class="article-date">
-  <time datetime="2017-03-29T12:50:24.000Z" itemprop="datePublished">2017-03-29</time>
+  <time datetime="2017-03-29T13:10:32.000Z" itemprop="datePublished">2017-03-29</time>
 </a>
     
   </div>
@@ -101,7 +113,7 @@ SessionLocaleResolver��
         
   
     <h1 class="article-title" itemprop="name">
-      SpringMVC国际��?通过超链接切换Locale
+      SpringMVC国际化--通过超链接切换Locale
     </h1>
   
 
@@ -109,35 +121,35 @@ SessionLocaleResolver��
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="SpringMVC���ʻ�-ͨ���������л�Locale"><a href="#SpringMVC���ʻ�-ͨ���������л�Locale" class="headerlink" title="SpringMVC���ʻ�-ͨ���������л�Locale"></a>SpringMVC���ʻ�-ͨ���������л�Locale</h1><h2 id="ʵ��ԭ��"><a href="#ʵ��ԭ��" class="headerlink" title="ʵ��ԭ��"></a>ʵ��ԭ��</h2><ul>
-<li>LocaleChangeInterceptor��<ol>
-<li>��ȡ�������� name = locale �Ĳ���</li>
-<li>������ locale ��������Ϊ Locale ����</li>
-<li>��ȡ LocaleResolver ����</li>
+        <h1 id="SpringMVC国际化–通过超链接切换Locale"><a href="#SpringMVC国际化–通过超链接切换Locale" class="headerlink" title="SpringMVC国际化–通过超链接切换Locale"></a>SpringMVC国际化–通过超链接切换Locale</h1><h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><ul>
+<li>LocaleChangeInterceptor：<ol>
+<li>获取请求域中 name = locale 的参数</li>
+<li>将这个 locale 参数解析为 Locale 对象</li>
+<li>获取 LocaleResolver 对象</li>
 </ol>
 </li>
-<li>SessionLocaleResolver��<ol>
-<li>�� Locale ��������Session��</li>
+<li>SessionLocaleResolver：<ol>
+<li>将 Locale 对象放入Session中</li>
 </ol>
 </li>
-<li>Ӧ�ó���<ol>
-<li>ȡ�� Session �е� Locale ����</li>
-<li>ʹ�ø� Locale �������ض�Ӧ�Ĺ��ʻ���Դ�ļ�<h2 id="ͨ��Դ������"><a href="#ͨ��Դ������" class="headerlink" title="ͨ��Դ������"></a>ͨ��Դ������</h2></li>
+<li>应用程序<ol>
+<li>取出 Session 中的 Locale 对象</li>
+<li>使用该 Locale 对象加载对应的国际化资源文件<h2 id="通过源码分析"><a href="#通过源码分析" class="headerlink" title="通过源码分析"></a>通过源码分析</h2></li>
 </ol>
 </li>
 <li><strong>DispatcherServlet.class</strong></li>
-<li><p>������doDispatch()<br><pre><code></code></pre></p>
+<li><p>方法：doDispatch()<br><pre><code></code></pre></p>
 <pre><code>if(!mappedHandler.applyPreHandle(processedRequest, response)) {
     return;
 }
 err = err1.handle(processedRequest, response, mappedHandler.getHandler());
 </code></pre><p></p>
 </li>
-<li><p>����Ⱦ��ͼǰ�������� LocaleChangeInterceptor �� preHandle ����</p>
+<li><p>在渲染视图前，会调用 LocaleChangeInterceptor 的 preHandle 方法</p>
 </li>
 <li><p><strong>LocaleChangeInterceptor.class</strong></p>
 </li>
-<li><p>������preHandle()<br><pre><code></code></pre></p>
+<li><p>方法：preHandle()<br><pre><code></code></pre></p>
 <pre><code>public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
     String newLocale = request.getParameter(this.getParamName());
     if(newLocale != null &amp;&amp; this.checkHttpMethod(request.getMethod())) {
@@ -161,11 +173,11 @@ err = err1.handle(processedRequest, response, mappedHandler.getHandler());
 }
 </code></pre><p></p>
 </li>
-<li><p>�÷�����ȡ�������е� name = locale �Ĳ���������������Ϊ Locale ������������ Locale �������ø� localeResolver</p>
+<li><p>该方法获取请求域中的 name = locale 的参数，并将其解析为 Locale 对象，最后将 Locale 对象设置给 localeResolver</p>
 </li>
 <li><p><strong>SessionLocaleResolver.class</strong></p>
 </li>
-<li><p>������setLocaleContext()<br><pre><code><br>  public void setLocaleContext(HttpServletRequest request, HttpServletResponse response, LocaleContext localeContext) {</code></pre></p>
+<li><p>方法：setLocaleContext()<br><pre><code><br>  public void setLocaleContext(HttpServletRequest request, HttpServletResponse response, LocaleContext localeContext) {</code></pre></p>
 <pre><code>    Locale locale = null;
     TimeZone timeZone = null;
     if(localeContext != null) {
@@ -180,19 +192,19 @@ err = err1.handle(processedRequest, response, mappedHandler.getHandler());
 }
 </code></pre><p></p>
 </li>
-<li><p>������������ locale = localeContext.getLocale(); ��ȡ�� LocaleChangeIntecerpetor �����õ� Locale ����</p>
+<li><p>在这个方法中 locale = localeContext.getLocale(); 获取在 LocaleChangeIntecerpetor 中设置的 Locale 对象</p>
 </li>
-<li>WebUtils.setSessionAttribute(request, LOCALE_SESSION_ATTRIBUTE_NAME, locale); �� Locale �������� Session ��</li>
+<li>WebUtils.setSessionAttribute(request, LOCALE_SESSION_ATTRIBUTE_NAME, locale); 将 Locale 对象放入 Session 中</li>
 </ul>
-<h2 id="ʵ�ֲ���"><a href="#ʵ�ֲ���" class="headerlink" title="ʵ�ֲ���"></a>ʵ�ֲ���</h2><ul>
-<li><p>�� Spring �����ļ������� LocaleChangeIntecerpetor �Լ� SessionLocaleResolver<br><pre><code></code></pre></p>
+<h2 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h2><ul>
+<li><p>在 Spring 配置文件中配置 LocaleChangeIntecerpetor 以及 SessionLocaleResolver<br><pre><code></code></pre></p>
 <pre><code>&amp;ltbean id=&quot;localeResolver&quot; class=&quot;org.springframework.web.servlet.i18n.SessionLocaleResolver&quot;/&gt;
     &amp;ltmvc:interceptors&gt;
        &amp;ltbean class=&quot;org.springframework.web.servlet.i18n.LocaleChangeInterceptor&quot;/&gt;
       &amp;lt/mvc:interceptors&gt;
 </code></pre><p></p>
 </li>
-<li><p>�� jsp ������һ�������ӣ����� locale ����<br><pre><code></code></pre></p>
+<li><p>在 jsp 中设置一个超链接，传递 locale 参数<br><pre><code></code></pre></p>
 <pre><code>&amp;lta href=&quot;i18n?locale=en_US&quot;&gt;i18n&lt;/a&gt;
 </code></pre><p></p>
 </li>
@@ -201,10 +213,10 @@ err = err1.handle(processedRequest, response, mappedHandler.getHandler());
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/29/SpringMVC国际化-通过超链接切换Locale/" data-id="cj0uz8qym0000ksweyb7jx96e" class="article-share-link">Partager</a>
+      <a data-url="http://yoursite.com/2017/03/29/SpringMVC国际化-通过超链接切换Locale/" data-id="cj0uzqllw000084wedmulkn0b" class="article-share-link">Delen</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC/">SpringMVC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/���ʻ�/">���ʻ�</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/����/">����</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC/">SpringMVC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/博客/">博客</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/国际化/">国际化</a></li></ul>
 
     </footer>
   </div>
@@ -214,7 +226,7 @@ err = err1.handle(processedRequest, response, mappedHandler.getHandler());
   
   
     <a href="/2017/03/29/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Ouder</strong>
       <div class="article-nav-title">Hello World</div>
     </a>
   
@@ -232,9 +244,9 @@ err = err1.handle(processedRequest, response, mappedHandler.getHandler());
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Mot-clés</h3>
+    <h3 class="widget-title">Labels</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringMVC/">SpringMVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/���ʻ�/">���ʻ�</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/����/">����</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringMVC/">SpringMVC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客/">博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/国际化/">国际化</a></li></ul>
     </div>
   </div>
 
@@ -242,16 +254,16 @@ err = err1.handle(processedRequest, response, mappedHandler.getHandler());
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/SpringMVC/" style="font-size: 10px;">SpringMVC</a> <a href="/tags/���ʻ�/" style="font-size: 10px;">���ʻ�</a> <a href="/tags/����/" style="font-size: 10px;">����</a>
+      <a href="/tags/SpringMVC/" style="font-size: 10px;">SpringMVC</a> <a href="/tags/博客/" style="font-size: 10px;">博客</a> <a href="/tags/国际化/" style="font-size: 10px;">国际化</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archieven</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
     </div>
@@ -261,12 +273,12 @@ err = err1.handle(processedRequest, response, mappedHandler.getHandler());
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
+    <h3 class="widget-title">Recente berichten</h3>
     <div class="widget">
       <ul>
         
           <li>
-            <a href="/2017/03/29/SpringMVC国际化-通过超链接切换Locale/">SpringMVC国际��?通过超链接切换Locale</a>
+            <a href="/2017/03/29/SpringMVC国际化-通过超链接切换Locale/">SpringMVC国际化--通过超链接切换Locale</a>
           </li>
         
           <li>
@@ -286,7 +298,7 @@ err = err1.handle(processedRequest, response, mappedHandler.getHandler());
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2017 John Doe<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
